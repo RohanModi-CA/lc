@@ -8,7 +8,7 @@ LIBS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 PROG = mygame
 
 # Source files
-SRCS = main.c resources/other_funcs/cube.c resources/other_funcs/CA1d_io.c resources/other_funcs/stl_handling.c
+SRCS = main.c resources/other_funcs/cube.c resources/other_funcs/CA1d_io.c resources/other_funcs/stl_handling.c resources/other_funcs/event_logging.c
 
 # Rule to build the program
 $(PROG): $(SRCS)

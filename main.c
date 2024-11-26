@@ -18,6 +18,7 @@
 #include "resources/world_funcs/camera_setup.h"
 #include "resources/other_funcs/CA1d_io.h"
 #include "resources/other_funcs/stl_handling.h"
+#include "resources/other_funcs/event_logging.h"
 #include <math.h>
 
 
@@ -35,6 +36,7 @@ Vector3 trajectory(float t){
 
 int main(void)
 {
+    SetTraceLogLevel(LOG_FATAL);
 
     struct all_triangles_mesh_events* cube_events = get_events_from_stl("resources/models/20mm_cube.stl", 0.0f);
     ScaleSizeMeshEvents( cube_events, 0.1  );
@@ -42,10 +44,10 @@ int main(void)
     struct one_triangle_vertices* vertices = (struct one_triangle_vertices*) calloc(cube_events->amount_of_triangles, sizeof(struct one_triangle_vertices)); 
     memcpy( vertices, cube_events->all_triangles, cube_events->amount_of_triangles * sizeof(struct one_triangle_vertices));
 
-    struct all_triangles_mesh_events* the_fox = (struct all_triangles_mesh_events*) calloc(1, sizeof(struct all_triangles_mesh_events*));
+    // we need to actually allocate space for the whole struct, not just the pointer, thank you, Valgrind :)
+    struct all_triangles_mesh_events* the_fox = (struct all_triangles_mesh_events*) calloc(1, sizeof(struct all_triangles_mesh_events));
     the_fox->all_triangles=vertices; the_fox->amount_of_triangles=cube_events->amount_of_triangles; the_fox->time=cube_events->time;
 
-    //print_vertex_events(cube_events);
 
 
     // Initialization
@@ -60,7 +62,7 @@ int main(void)
     SetTargetFPS(30);                   // Set our game to run at 60 frames-per-second
 
     
-    printf("%d", cube_events->amount_of_triangles);
+    //printf("%d", cube_events->amount_of_triangles);
 
     // Main game loop
     while (!WindowShouldClose())        // Detect window close button or ESC key
@@ -78,6 +80,7 @@ int main(void)
                 //TranslateMeshEvents(cube_events, (Vector3) { sin(GetTime()) ,0,cos(GetTime())}, 0.6);
 
                 DrawFromAllTrianglesMeshEvents(the_fox);
+                DrawTriangleMeshFromEvents(the_fox);
 
                 DrawGrid(150, 1.0f);
 
@@ -87,6 +90,9 @@ int main(void)
         EndDrawing();
     }
 
+
+    struct CA1d* fox_file_ca1d = atme_to_CA1d_leak(the_fox);    
+    write_ca1d_to_file(fox_file_ca1d, "resources/event_log/fox_file.txt");
 
 
     //--------------------------------------------------------------------------------------

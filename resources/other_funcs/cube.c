@@ -19,17 +19,7 @@ void Follow_Trajectory(struct all_triangles_mesh_events* initial_state, struct a
 }
 
 
-void TranslateMeshEvents( struct all_triangles_mesh_events* atme, Vector3 displacement, float absolute_time){
-    for (int which_triangle=0; which_triangle < atme->amount_of_triangles; ++which_triangle){
-        for(int which_vertex=0; which_vertex < 3; ++which_vertex){
-            atme->all_triangles[which_triangle].all_3_vertices[which_vertex].x += displacement.x;
-            atme->all_triangles[which_triangle].all_3_vertices[which_vertex].y += displacement.y;
-            atme->all_triangles[which_triangle].all_3_vertices[which_vertex].z += displacement.z;
-        }
-    }
 
-    return;
-}
 
 void ScaleSizeMeshEvents( struct all_triangles_mesh_events* atme, float scale_factor){
     for(int which_triangle=0; which_triangle < atme->amount_of_triangles; ++which_triangle)
@@ -42,6 +32,48 @@ void ScaleSizeMeshEvents( struct all_triangles_mesh_events* atme, float scale_fa
     }
     return;
 }
+
+
+
+void DrawTriangleMeshFromEvents(struct all_triangles_mesh_events* atme){
+    // initialize x,y,z to be used for each triangle to extract from their Vector3s:
+    float x_1=0.0f; float y_1=0.0f; float z_1 = 0.0f; float x_2=0.0f; float y_2=0.0f; float z_2 = 0.0f; 
+    int next_vertex;
+
+    // save the old state onto the stack, again, not necessary
+    rlPushMatrix();
+
+    // We are making lines
+    rlBegin(RL_LINES);
+
+        rlColor4ub(0, 0, 0, 255);
+
+        for(int which_triangle=0; which_triangle < atme->amount_of_triangles; ++which_triangle){
+            for(int which_vertex=0; which_vertex < 3; ++which_vertex){
+
+                switch (which_vertex)
+                {
+                case 0:
+                    next_vertex=1; break;
+                case 1:
+                    next_vertex=2; break;
+                case 2:
+                    next_vertex=0; break;
+                }
+                x_1 = atme->all_triangles[which_triangle].all_3_vertices[which_vertex].x;   x_2 = atme->all_triangles[which_triangle].all_3_vertices[next_vertex].x;
+                y_1 = atme->all_triangles[which_triangle].all_3_vertices[which_vertex].y;   y_2 = atme->all_triangles[which_triangle].all_3_vertices[next_vertex].y;
+                z_1 = atme->all_triangles[which_triangle].all_3_vertices[which_vertex].z;   z_2 = atme->all_triangles[which_triangle].all_3_vertices[next_vertex].z;
+
+                rlVertex3f(x_1,y_1,z_1);
+                rlVertex3f(x_2,y_2,z_2);
+            }
+        }
+    rlEnd();
+
+    // oops, forgot this.
+    rlPopMatrix();
+}
+
 
 
 
@@ -86,7 +118,7 @@ void DrawFromAllTrianglesMeshEvents (struct all_triangles_mesh_events* atme){
 
 
 // NOTE: Cube position is the center position
-void ModifiedDrawCube(Vector3 position, float width, float height, float length, Color color)
+void ModifiedDrawCube(float width, float height, float length, Color color)
 {
     float x = 0.0f;
     float y = 0.0f;

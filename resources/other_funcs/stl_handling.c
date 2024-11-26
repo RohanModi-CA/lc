@@ -111,7 +111,6 @@ struct all_triangles_mesh_events* get_events_from_stl (char *file_name, float ti
 
     //Now, we need to loop through and actually populate the all_vertices array, which is an array of arrays[3] of Vector3s.
     // each outer_loop is one face, which is made of nine coordinates.
-    bool in_face = false; bool is_number = false;
     char* string_remaining = stl_CA1d->char_array;
     char* endptr; // for the conversion, we don't care abt this.
 

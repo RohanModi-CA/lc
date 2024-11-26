@@ -25,13 +25,13 @@ typedef Vector3 (*trajectory_function)(float);
 
 void Follow_Trajectory(struct all_triangles_mesh_events* initial_state, struct all_triangles_mesh_events* current_state,  trajectory_function traj, float absolute_time);
 
-void TranslateMeshEvents( struct all_triangles_mesh_events* atme, Vector3 displacement, float absolute_time);
 
 void ScaleSizeMeshEvents( struct all_triangles_mesh_events* atme, float scale_factor);
 
 void DrawFromAllTrianglesMeshEvents (struct all_triangles_mesh_events* atme);
 
+void DrawTriangleMeshFromEvents(struct all_triangles_mesh_events* atme);
 
-void ModifiedDrawCube(Vector3 position, float width, float height, float length, Color color);
+void ModifiedDrawCube(float width, float height, float length, Color color);
 
 
